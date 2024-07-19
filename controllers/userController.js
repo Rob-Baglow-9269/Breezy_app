@@ -1,60 +1,57 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
-  try {
-    // Log incoming request
-    console.log('Register user request:', { username, email, password });
+// Existing registerUser and loginUser functions...
 
-    // Check if the user already exists
-    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
-    console.log('Existing user check result:', existingUser);
-    if (existingUser) {
-      console.log('User already exists:', existingUser);
-      return res.status(400).json({ error: 'User already exists' });
+const updateUser = async (req, res) => {
+  const { id } = req.params;
+  const { username, email, password } = req.body;
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    // Create a new user
-    const user = await User.create({ username, email, password });
-    console.log('New user created:', user);
+    user.username = username || user.username;
+    user.email = email || user.email;
 
-    res.status(201).json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      token: generateToken(user._id),
+    if (password) {
+      user.password = password; // Assuming your schema has a pre-save hook to hash passwords
+    }
+
+    const updatedUser = await user.save();
+    res.json({
+      _id: updatedUser._id,
+      username: updatedUser.username,
+      email: updatedUser.email,
+      token: generateToken(updatedUser._id),
     });
   } catch (error) {
-    console.error('Error creating user:', error);
+    console.error('Error updating user:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
 
-const loginUser = async (req, res) => {
-  const { username, password } = req.body;
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const user = await User.findOne({ username });
-    if (user && (await user.matchPassword(password))) {
-      res.json({
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        token: generateToken(user._id),
-      });
-    } else {
-      res.status(401).json({ error: 'Invalid credentials' });
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
+
+    await user.remove();
+    res.json({ message: 'User deleted successfully' });
   } catch (error) {
-    console.error('Error logging in:', error);
+    console.error('Error deleting user:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d',
-  });
-};
+// Existing generateToken function...
 
-module.exports = { registerUser, loginUser };
+module.exports = { registerUser, loginUser, updateUser, deleteUser };
