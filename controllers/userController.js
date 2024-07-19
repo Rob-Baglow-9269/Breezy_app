@@ -1,4 +1,4 @@
-const mongoose = require('mongoose'); // Ensure mongoose is imported at the top
+const mongoose = require('mongoose'); 
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
@@ -73,7 +73,7 @@ const updateUser = async (req, res) => {
     user.email = email || user.email;
 
     if (password) {
-      user.password = password; // Assuming your schema has a pre-save hook to hash passwords
+      user.password = password;
     }
 
     const updatedUser = await user.save();
