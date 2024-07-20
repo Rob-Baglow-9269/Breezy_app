@@ -55,12 +55,8 @@ const loginUser = async (req, res) => {
 
 // Update user function
 const updateUser = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.user; // Obtain user ID from the token
   const { username, email, password } = req.body;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: 'Invalid user ID' });
-  }
 
   try {
     const user = await User.findById(id);
@@ -69,8 +65,23 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    user.username = username || user.username;
-    user.email = email || user.email;
+    // Check for existing user with the same username
+    if (username && username !== user.username) {
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({ error: 'Username already exists' });
+      }
+      user.username = username;
+    }
+
+    // Check for existing user with the same email
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
+      user.email = email;
+    }
 
     if (password) {
       user.password = password;
@@ -81,7 +92,6 @@ const updateUser = async (req, res) => {
       _id: updatedUser._id,
       username: updatedUser.username,
       email: updatedUser.email,
-      token: generateToken(updatedUser._id),
     });
   } catch (error) {
     console.error('Error updating user:', error);
@@ -91,11 +101,7 @@ const updateUser = async (req, res) => {
 
 // Delete user function
 const deleteUser = async (req, res) => {
-  const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: 'Invalid user ID' });
-  }
+  const { id } = req.user; // Obtain user ID from the token
 
   try {
     const user = await User.findById(id);

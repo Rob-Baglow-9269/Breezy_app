@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { registerUser, loginUser, updateUser, deleteUser } = require('../controllers/userController');
+const { authenticateToken } = require('../middleware/authMiddleware');
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-router.put('/:id', updateUser); // Update user
-router.delete('/:id', deleteUser); // Delete user
+router.put('/update', authenticateToken, updateUser); // Ensure this line uses authenticateToken
+router.delete('/delete', authenticateToken, deleteUser);
 
 module.exports = router;

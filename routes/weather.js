@@ -1,9 +1,8 @@
-// routes/weather.js
 const express = require('express');
-const { getWeather } = require('../controllers/weatherController');
-const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
+const { getWeather } = require('../controllers/weatherController');
+const { authenticateToken } = require('../middleware/authMiddleware');
 
-router.get('/', protect, getWeather);
+router.get('/', authenticateToken, getWeather); // Protect the route with middleware
 
 module.exports = router;
