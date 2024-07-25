@@ -1,10 +1,10 @@
 import React from 'react';
 import WeatherDisplay from '../components/Weather/WeatherDisplay';
+import './Home.css';
 
 const Home = () => {
   return (
-    <div>
-      <h1>Weather App</h1>
+    <div className="home-container">
       <WeatherDisplay />
     </div>
   );
