@@ -1,13 +1,27 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './Tray.css'; // Ensure you have the CSS file
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import './Tray.css';
 
-const Tray = () => {
+const Tray = ({ isLoggedIn, setIsLoggedIn }) => {
   const [isTrayOpen, setIsTrayOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleTray = () => {
     setIsTrayOpen(!isTrayOpen);
   };
+
+  const handleSignOut = () => {
+    // Clear token from localStorage
+    localStorage.removeItem('token');
+    // Update state to reflect that the user is logged out
+    setIsLoggedIn(false);
+    // Redirect to home page
+    navigate('/');
+    alert('Signed out successfully!');
+  };
+
+  const getClassName = (path) => location.pathname === path ? 'active' : '';
 
   return (
     <div className="tray-container">
@@ -17,10 +31,11 @@ const Tray = () => {
       {isTrayOpen && (
         <div className="tray">
           <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/login">Login</Link></li>
-            <li><Link to="/register">Register</Link></li>
-            <li><Link to="/account">Account Settings</Link></li> {/* Add Account Settings link */}
+            <li className={getClassName('/')}><Link to="/">Home</Link></li>
+            {!isLoggedIn && <li className={getClassName('/register')}><Link to="/register">Register</Link></li>}
+            {!isLoggedIn && <li className={getClassName('/login')}><Link to="/login">Login</Link></li>}
+            {isLoggedIn && <li className={getClassName('/account')}><Link to="/account">Account Settings</Link></li>}
+            {isLoggedIn && <li><button className="link-button" onClick={handleSignOut}>Sign Out</button></li>}
           </ul>
         </div>
       )}
