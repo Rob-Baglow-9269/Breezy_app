@@ -1,20 +1,31 @@
 .navbar {
   display: flex;
-  justify-content: flex-end; /* Align items to the right */
   align-items: center;
-  padding: 10px 20px;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #e0e0e0;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #d0e0d5; 
 }
 
 .navbar-content {
   display: flex;
-  justify-content: flex-end; /* Align items to the right */
   align-items: center;
   width: 100%;
 }
 
+.navbar-logo img {
+  height: 100px; 
+}
+
+.navbar-title {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.navbar-title h1 {
+  font-size: 2.5em; 
+  margin: 0;
+}
+
 .navbar-tray {
-  display: flex;
-  align-items: center;
+  margin-left: auto;
 }

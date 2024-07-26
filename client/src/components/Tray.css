@@ -35,3 +35,21 @@
   text-decoration: none;
   color: #007bff;
 }
+
+.link-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
+.link-button:hover {
+  color: darkblue;
+}
+
+.active {
+  font-weight: bold;
+}

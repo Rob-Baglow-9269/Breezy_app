@@ -3,8 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './AccountSettings.css'; // Ensure you have the CSS file
 
-const AccountSettings = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+const AccountSettings = ({ setIsLoggedIn }) => {
+  const [isLoggedIn, setIsLoggedInState] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,7 +13,7 @@ const AccountSettings = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      setIsLoggedIn(true);
+      setIsLoggedInState(true);
     }
   }, []);
 
@@ -22,6 +22,7 @@ const AccountSettings = () => {
     try {
       const res = await axios.post('http://localhost:5000/api/users/login', { username, password });
       localStorage.setItem('token', res.data.token);
+      setIsLoggedInState(true);
       setIsLoggedIn(true);
     } catch (error) {
       alert('Login failed!');
@@ -37,7 +38,7 @@ const AccountSettings = () => {
           Authorization: `Bearer ${token}`,
         },
       };
-      const res = await axios.put('http://localhost:5000/api/users/update', { username, email, password }, config);
+      await axios.put('http://localhost:5000/api/users/update', { username, email, password }, config);
       alert('Update successful!');
     } catch (error) {
       console.error('Error updating user:', error.response?.data || error.message);
@@ -55,12 +56,21 @@ const AccountSettings = () => {
       };
       await axios.delete('http://localhost:5000/api/users/delete', config);
       alert('Account deleted successfully!');
-      localStorage.removeItem('token');
-      setIsLoggedIn(false);
-      navigate('/'); // Redirect to home
+      handleSignOut(); // Call handleSignOut after successful account deletion
     } catch (error) {
       alert('Account deletion failed!');
     }
+  };
+
+  const handleSignOut = () => {
+    // Clear token from localStorage
+    localStorage.removeItem('token');
+    // Update state to reflect that the user is logged out
+    setIsLoggedIn(false);
+    setIsLoggedInState(false);
+    // Redirect to home page
+    navigate('/');
+    alert('Signed out successfully!');
   };
 
   if (!isLoggedIn) {

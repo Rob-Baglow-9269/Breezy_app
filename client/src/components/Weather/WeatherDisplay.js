@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './WeatherDisplay.css'
 
 const WeatherDisplay = () => {
   const [city, setCity] = useState('');
@@ -25,13 +26,13 @@ const WeatherDisplay = () => {
   };
 
   return (
-    <div>
+    <div className="weather-container">
       <form onSubmit={fetchWeather}>
         <input type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
         <button type="submit">Get Weather</button>
       </form>
       {weather && (
-        <div>
+        <div className="weather-info">
           <h3>Weather in {weather.city}, {weather.country}</h3>
           <p>Temperature: {weather.temperature}°C</p>
           <p>Condition: {weather.condition}</p>

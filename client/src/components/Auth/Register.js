@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-const Register = () => {
+const Register = ({ setIsLoggedIn }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/users/register', { username, email, password }); // Ensure the correct port
-      alert('Registration successful!');
+      await axios.post('http://localhost:5000/api/users/register', { username, email, password }); 
+      // After successful registration, log in the user
+      const res = await axios.post('http://localhost:5000/api/users/login', { username, password });
+      localStorage.setItem('token', res.data.token);
+      setIsLoggedIn(true);
+      navigate('/'); // Redirect to home page
+      alert('Registration and login successful!');
     } catch (error) {
-      alert('Registration failed!');
+      alert('Registration or login failed!');
     }
   };
 
