@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const userRoutes = require('./routes/user');
 const weatherRoutes = require('./routes/weather');
 const apiRoutes = require('./routes/api');
+const favouriteRoutes = require('./routes/favouriteRoutes');
 
 dotenv.config();
 
@@ -20,6 +21,8 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api', apiRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/weather', weatherRoutes);
+app.use('/api/favourites', favouriteRoutes);
+
 
 app.get('/', (req, res) => {
   res.send('Weather App API');

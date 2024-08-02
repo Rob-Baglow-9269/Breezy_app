@@ -1,0 +1,24 @@
+/* components/Weather/Favourites.css */
+.favourites-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 20px;
+    font-family: sans-serif;
+    font-size: 14px;
+    width: 300px;
+  }
+  
+  .favourites-container h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .favourites-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .favourites-container li {
+    margin-bottom: 5px;
+  }
+  

@@ -1,11 +1,12 @@
+// Home.js
 import React from 'react';
 import WeatherDisplay from '../components/Weather/WeatherDisplay';
 import './Home.css';
 
-const Home = () => {
+const Home = ({ isLoggedIn }) => {
   return (
     <div className="home-container">
-      <WeatherDisplay />
+      <WeatherDisplay isLoggedIn={isLoggedIn} />
     </div>
   );
 };

@@ -1,8 +1,10 @@
+// components/Weather/WeatherDisplay.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import './WeatherDisplay.css'
+import './WeatherDisplay.css';
+import Favourites from './Favourites';
 
-const WeatherDisplay = () => {
+const WeatherDisplay = ({ isLoggedIn }) => {
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
 
@@ -17,10 +19,38 @@ const WeatherDisplay = () => {
       });
       setWeather(res.data);
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        alert('Unauthorized. Please log in.');
+      if (error.response) {
+        if (error.response.status === 401) {
+          alert('Unauthorized. Please log in.');
+        } else if (error.response.status === 404) {
+          alert('City not found. Please check the city name and try again.');
+        } else if (error.response.status >= 500) {
+          alert('Server error. Please try again later.');
+        } else {
+          alert('Failed to fetch weather data. Please check your request and try again.');
+        }
+      } else if (error.request) {
+        alert('No response received from server. Please check your network connection and try again.');
       } else {
-        alert('Failed to fetch weather data');
+        alert(`Error: ${error.message}`);
+      }
+    }
+  };
+
+  const saveFavourite = async () => {
+    if (weather && isLoggedIn) {
+      try {
+        const token = localStorage.getItem('token');
+        await axios.post('https://breezy-app.onrender.com/api/favourites', {
+          username: localStorage.getItem('username'),
+          savedCities: [{ cityName: weather.city }]
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert('City saved to favourites!');
+      } catch (error) {
+        console.error('Failed to save favourite', error);
+        alert('Failed to save favourite');
       }
     }
   };
@@ -30,6 +60,9 @@ const WeatherDisplay = () => {
       <form onSubmit={fetchWeather}>
         <input type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
         <button type="submit">Get Weather</button>
+        {weather && (
+          <button type="button" onClick={saveFavourite}>Save</button>
+        )}
       </form>
       {weather && (
         <div className="weather-info">
@@ -38,6 +71,7 @@ const WeatherDisplay = () => {
           <p>Condition: {weather.condition}</p>
         </div>
       )}
+      <Favourites isLoggedIn={isLoggedIn} />
     </div>
   );
 };
