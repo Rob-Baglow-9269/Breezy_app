@@ -20,8 +20,10 @@ const WeatherDisplay = () => {
     } catch (error) {
       if (error.response && error.response.status === 401) {
         alert('Unauthorized. Please log in.');
+      } else if (error.response && error.response.status === 500) {
+        alert('Server error. Please try again later.');
       } else {
-        alert('Failed to fetch weather data');
+        alert('Failed to fetch weather data. Please check the city name.');
       }
     }
   };
@@ -71,33 +73,37 @@ const WeatherDisplay = () => {
 
   return (
     <div className="weather-container">
-      <div className="form-section">
-        <form onSubmit={fetchWeather}>
-          <input type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
-          <button type="submit">Get Weather</button>
-          <button type="button" onClick={saveFavourite}>Save</button>
-        </form>
-        {weather && (
-          <div className="weather-info">
-            <h3>Weather in {weather.city}, {weather.country}</h3>
-            <p>Temperature: {weather.temperature}°C</p>
-            <p>Condition: {weather.condition}</p>
-          </div>
-        )}
+      <div className="left-section">
+        <div className="form-section">
+          <form onSubmit={fetchWeather}>
+            <input type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+            <button type="submit">Get Weather</button>
+            <button type="button" onClick={saveFavourite}>Save</button>
+          </form>
+          {weather && (
+            <div className="weather-info">
+              <h3>Weather in {weather.city}, {weather.country}</h3>
+              <p>Temperature: {weather.temperature}°C</p>
+              <p>Condition: {weather.condition}</p>
+            </div>
+          )}
+        </div>
       </div>
-      <div className="favourites-container">
-        <h2>Favourites</h2>
-        {favourites.map((fav, index) => (
-          <div key={index} className="favourite-item">
-            <h4>{fav.cityName}</h4>
-            {fav.weather && (
-              <div className="weather-info">
-                <p>Temperature: {fav.weather.temperature}°C</p>
-                <p>Condition: {fav.weather.condition}</p>
-              </div>
-            )}
-          </div>
-        ))}
+      <div className="right-section">
+        <div className="favourites-container">
+          <h2>Favourites</h2>
+          {favourites.map((fav, index) => (
+            <div key={index} className="favourite-item">
+              <h4>{fav.cityName}</h4>
+              {fav.weather && (
+                <div className="weather-info">
+                  <p>Temperature: {fav.weather.temperature}°C</p>
+                  <p>Condition: {fav.weather.condition}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

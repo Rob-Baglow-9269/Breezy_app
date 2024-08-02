@@ -1,57 +1,45 @@
-// components/Weather/Favourites.js
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Favourites.css';
+const Favourite = require('../models/Favourites');
+const jwt = require('jsonwebtoken');
 
-const Favourites = ({ isLoggedIn }) => {
-  const [favourites, setFavourites] = useState([]);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchFavourites();
-    }
-  }, [isLoggedIn]);
-
-  const fetchFavourites = async () => {
+// Create a new favourite entry
+exports.createFavourite = async (req, res) => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('https://breezy-app.onrender.com/api/favourites', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const favouriteCities = res.data;
-      const weatherData = await Promise.all(
-        favouriteCities.map(async (fav) => {
-          const weatherRes = await axios.get(`https://breezy-app.onrender.com/api/weather?city=${fav.savedCities[0].cityName}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          return {
-            city: fav.savedCities[0].cityName,
-            weather: weatherRes.data
-          };
-        })
-      );
-      setFavourites(weatherData);
+        // Log the headers and request body
+        console.log('Request Headers:', req.headers);
+        console.log('Request Body:', req.body);
+
+        // Decode the token to get the user info
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        if (token == null) {
+            console.log('No token provided');
+            return res.sendStatus(401);
+        }
+
+        // Verify the token and extract the user
+        jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
+            if (err) {
+                console.log('Token verification failed:', err);
+                return res.sendStatus(403);
+            }
+
+            // Log the decoded user information
+            console.log('Decoded User:', user);
+
+            // Create a new Favourite entry
+            const favourite = new Favourite({
+                username: user.username,
+                savedCities: req.body.savedCities
+            });
+
+            // Save the favourite to the database
+            await favourite.save();
+
+            // Send the response
+            res.status(201).send(favourite);
+        });
     } catch (error) {
-      console.error('Failed to fetch favourites', error);
+        console.error('Error:', error);  // Log the error
+        res.status(400).send(error);
     }
-  };
-
-  return (
-    <div className="favourites-container">
-      <h2>Favourites</h2>
-      {favourites.map((fav, index) => (
-        <div key={index} className="favourite">
-          <h3>{fav.city}</h3>
-          {fav.weather && (
-            <div className="favourite-weather">
-              <p>Temperature: {fav.weather.temperature}°C</p>
-              <p>Condition: {fav.weather.condition}</p>
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
 };
-
-export default Favourites;
