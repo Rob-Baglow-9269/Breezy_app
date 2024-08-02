@@ -10,7 +10,7 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
           <img src="/image0.jpg" alt="Logo" />
         </div>
         <div className="navbar-title">
-          <h1>Breezy Weather Ondemand</h1>
+          <h1>Breezy Weather</h1>
         </div>
         <div className="navbar-tray">
           <Tray isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
