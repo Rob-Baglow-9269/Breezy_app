@@ -1,17 +1,14 @@
 .weather-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    margin-top: 20px; /* Adjust this value as needed */
-  }
-  
-  .weather-form {
-    margin-bottom: 20px; /* Space between form and weather info */
-  }
-  
-  .weather-info {
-    margin-top: 20px; /* Space between form and weather info */
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.favourites-wrapper {
+  margin-right: 20px;
+}
+
+.weather-display {
+  text-align: center;
+}

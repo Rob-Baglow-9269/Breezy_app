@@ -1,24 +1,25 @@
 /* components/Weather/Favourites.css */
 .favourites-container {
+    width: 25%;
+    padding: 20px;
+    margin-right: 20px;
     border: 1px solid #ccc;
-    padding: 10px;
-    margin-top: 20px;
+    border-radius: 8px;
     font-family: sans-serif;
-    font-size: 14px;
-    width: 300px;
+    font-size: 14px; /* Adjust font size */
+    text-align: left;
   }
   
   .favourites-container h2 {
-    font-size: 16px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 16px; /* Title font size */
   }
   
-  .favourites-container ul {
-    list-style: none;
-    padding: 0;
+  .favourite {
+    margin-bottom: 20px;
   }
   
-  .favourites-container li {
-    margin-bottom: 5px;
+  .favourite-weather {
+    margin-left: 10px;
   }
   

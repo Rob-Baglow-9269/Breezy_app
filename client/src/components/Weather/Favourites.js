@@ -7,30 +7,49 @@ const Favourites = ({ isLoggedIn }) => {
   const [favourites, setFavourites] = useState([]);
 
   useEffect(() => {
-    const fetchFavourites = async () => {
-      if (isLoggedIn) {
-        try {
-          const token = localStorage.getItem('token');
-          const res = await axios.get('https://breezy-app.onrender.com/api/favourites', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          setFavourites(res.data);
-        } catch (error) {
-          console.error('Failed to fetch favourites', error);
-        }
-      }
-    };
-    fetchFavourites();
+    if (isLoggedIn) {
+      fetchFavourites();
+    }
   }, [isLoggedIn]);
+
+  const fetchFavourites = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get('https://breezy-app.onrender.com/api/favourites', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const favouriteCities = res.data;
+      const weatherData = await Promise.all(
+        favouriteCities.map(async (fav) => {
+          const weatherRes = await axios.get(`https://breezy-app.onrender.com/api/weather?city=${fav.savedCities[0].cityName}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          return {
+            city: fav.savedCities[0].cityName,
+            weather: weatherRes.data
+          };
+        })
+      );
+      setFavourites(weatherData);
+    } catch (error) {
+      console.error('Failed to fetch favourites', error);
+    }
+  };
 
   return (
     <div className="favourites-container">
       <h2>Favourites</h2>
-      <ul>
-        {favourites.map(fav => (
-          <li key={fav._id}>{fav.savedCities.map(city => city.cityName).join(', ')}</li>
-        ))}
-      </ul>
+      {favourites.map((fav, index) => (
+        <div key={index} className="favourite">
+          <h3>{fav.city}</h3>
+          {fav.weather && (
+            <div className="favourite-weather">
+              <p>Temperature: {fav.weather.temperature}°C</p>
+              <p>Condition: {fav.weather.condition}</p>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 };
