@@ -1,24 +1,33 @@
-.weather-container {
+.weather-main-container {
   display: flex;
-  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
-.weather-input {
-  flex: 1;
+.favourites-container {
+  margin-right: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 200px;
+  align-self: flex-start;
+}
+
+.weather-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.weather-form {
+  margin-bottom: 20px;
 }
 
 .weather-info {
   margin-top: 20px;
 }
 
-.favourites-container {
-  flex: 1;
-  margin-left: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.favourite-weather {
+.favourite-weather-info {
   margin-top: 10px;
 }
