@@ -6,12 +6,19 @@ const WeatherDisplay = ({ isLoggedIn }) => {
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
   const [favourites, setFavourites] = useState([]);
+  const [favouriteWeathers, setFavouriteWeathers] = useState([]);
 
   useEffect(() => {
     if (isLoggedIn) {
       fetchFavourites();
     }
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (favourites.length > 0) {
+      fetchFavouriteWeathers();
+    }
+  }, [favourites]);
 
   const fetchWeather = async (e) => {
     e.preventDefault();
@@ -48,34 +55,47 @@ const WeatherDisplay = ({ isLoggedIn }) => {
     }
   };
 
-  const saveFavourite = async () => {
+  const fetchFavouriteWeathers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post('https://breezy-app.onrender.com/api/favourites', {
-        username: 'testuser', // Replace with actual username from context or state if available
-        savedCities: [{ cityName: city }]
-      }, {
+      const weatherPromises = favourites.map(fav => 
+        axios.get(`https://breezy-app.onrender.com/api/weather?city=${fav.savedCities[0].cityName}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+      );
+      const weatherResults = await Promise.all(weatherPromises);
+      setFavouriteWeathers(weatherResults.map(res => res.data));
+    } catch (error) {
+      console.error('Failed to fetch favourite weathers', error);
+    }
+  };
+
+  const addFavourite = async () => {
+    if (!city || favourites.some(fav => fav.savedCities[0].cityName === city)) return;
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post('https://breezy-app.onrender.com/api/favourites', { username: 'currentUser', savedCities: [{ cityName: city }] }, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      alert('City saved to favourites!');
-      fetchFavourites(); // Refresh favourites list
+      fetchFavourites();
     } catch (error) {
-      console.error('Failed to save favourite', error);
-      alert('Failed to save favourite city.');
+      console.error('Failed to add favourite', error);
     }
   };
 
   return (
     <div className="weather-container">
-      <form onSubmit={fetchWeather}>
-        <input type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
-        <button type="submit">Get Weather</button>
-        {weather && (
-          <button type="button" onClick={saveFavourite}>Save to Favourites</button>
-        )}
-      </form>
+      <div className="weather-input">
+        <form onSubmit={fetchWeather}>
+          <input type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+          <button type="submit">Get Weather</button>
+          <button type="button" onClick={addFavourite}>Save</button>
+        </form>
+      </div>
       {weather && (
         <div className="weather-info">
           <h3>Weather in {weather.city}, {weather.country}</h3>
@@ -83,16 +103,16 @@ const WeatherDisplay = ({ isLoggedIn }) => {
           <p>Condition: {weather.condition}</p>
         </div>
       )}
-      {isLoggedIn && favourites.length > 0 && (
-        <div className="favourites-list">
-          <h3>Favourites</h3>
-          <ul>
-            {favourites.map((fav) => (
-              <li key={fav._id}>{fav.savedCities.map(city => city.cityName).join(', ')}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <div className="favourites-container">
+        <h3>Favourites</h3>
+        {favouriteWeathers.map((favWeather, index) => (
+          <div key={index} className="favourite-weather">
+            <h4>{favWeather.city}, {favWeather.country}</h4>
+            <p>Temperature: {favWeather.temperature}°C</p>
+            <p>Condition: {favWeather.condition}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
