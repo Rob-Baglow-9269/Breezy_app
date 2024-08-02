@@ -1,12 +1,17 @@
-// components/Weather/WeatherDisplay.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './WeatherDisplay.css';
-import Favourites from './Favourites';
 
 const WeatherDisplay = ({ isLoggedIn }) => {
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
+  const [favourites, setFavourites] = useState([]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchFavourites();
+    }
+  }, [isLoggedIn]);
 
   const fetchWeather = async (e) => {
     e.preventDefault();
@@ -19,61 +24,75 @@ const WeatherDisplay = ({ isLoggedIn }) => {
       });
       setWeather(res.data);
     } catch (error) {
-      if (error.response) {
-        if (error.response.status === 401) {
-          alert('Unauthorized. Please log in.');
-        } else if (error.response.status === 404) {
-          alert('City not found. Please check the city name and try again.');
-        } else if (error.response.status >= 500) {
-          alert('Server error. Please try again later.');
-        } else {
-          alert('Failed to fetch weather data. Please check your request and try again.');
-        }
-      } else if (error.request) {
-        alert('No response received from server. Please check your network connection and try again.');
+      if (error.response && error.response.status === 401) {
+        alert('Unauthorized. Please log in.');
+      } else if (error.response && error.response.status === 500) {
+        alert('Server error. Please try again later.');
       } else {
-        alert(`Error: ${error.message}`);
+        alert('Failed to fetch weather data. Please check your request.');
       }
     }
   };
 
+  const fetchFavourites = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get('https://breezy-app.onrender.com/api/favourites', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setFavourites(res.data);
+    } catch (error) {
+      console.error('Failed to fetch favourites', error);
+    }
+  };
+
   const saveFavourite = async () => {
-    if (weather && isLoggedIn) {
-      try {
-        const token = localStorage.getItem('token');
-        await axios.post('https://breezy-app.onrender.com/api/favourites', {
-          username: localStorage.getItem('username'),
-          savedCities: [{ cityName: weather.city }]
-        }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        alert('City saved to favourites!');
-      } catch (error) {
-        console.error('Failed to save favourite', error);
-        alert('Failed to save favourite');
-      }
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.post('https://breezy-app.onrender.com/api/favourites', {
+        username: 'testuser', // Replace with actual username from context or state if available
+        savedCities: [{ cityName: city }]
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      alert('City saved to favourites!');
+      fetchFavourites(); // Refresh favourites list
+    } catch (error) {
+      console.error('Failed to save favourite', error);
+      alert('Failed to save favourite city.');
     }
   };
 
   return (
     <div className="weather-container">
-      <div className="favourites-wrapper">
-        <Favourites isLoggedIn={isLoggedIn} />
-      </div>
-      <div className="weather-display">
-        <form onSubmit={fetchWeather}>
-          <input type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
-          <button type="submit">Get Weather</button>
-        </form>
+      <form onSubmit={fetchWeather}>
+        <input type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+        <button type="submit">Get Weather</button>
         {weather && (
-          <div className="weather-info">
-            <h3>Weather in {weather.city}, {weather.country}</h3>
-            <p>Temperature: {weather.temperature}°C</p>
-            <p>Condition: {weather.condition}</p>
-            <button type="button" onClick={saveFavourite}>Save</button>
-          </div>
+          <button type="button" onClick={saveFavourite}>Save to Favourites</button>
         )}
-      </div>
+      </form>
+      {weather && (
+        <div className="weather-info">
+          <h3>Weather in {weather.city}, {weather.country}</h3>
+          <p>Temperature: {weather.temperature}°C</p>
+          <p>Condition: {weather.condition}</p>
+        </div>
+      )}
+      {isLoggedIn && favourites.length > 0 && (
+        <div className="favourites-list">
+          <h3>Favourites</h3>
+          <ul>
+            {favourites.map((fav) => (
+              <li key={fav._id}>{fav.savedCities.map(city => city.cityName).join(', ')}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

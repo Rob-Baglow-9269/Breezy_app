@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -22,7 +23,6 @@ app.use('/api', apiRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/weather', weatherRoutes);
 app.use('/api/favourites', favouriteRoutes);
-
 
 app.get('/', (req, res) => {
   res.send('Weather App API');
