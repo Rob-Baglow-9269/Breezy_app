@@ -64,15 +64,13 @@ const WeatherDisplay = ({ isLoggedIn }) => {
         <form onSubmit={fetchWeather}>
           <input type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
           <button type="submit">Get Weather</button>
-          {weather && (
-            <button type="button" onClick={saveFavourite}>Save</button>
-          )}
         </form>
         {weather && (
           <div className="weather-info">
             <h3>Weather in {weather.city}, {weather.country}</h3>
             <p>Temperature: {weather.temperature}°C</p>
             <p>Condition: {weather.condition}</p>
+            <button type="button" onClick={saveFavourite}>Save</button>
           </div>
         )}
       </div>

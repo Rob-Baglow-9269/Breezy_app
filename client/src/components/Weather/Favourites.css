@@ -1,8 +1,7 @@
 /* components/Weather/Favourites.css */
 .favourites-container {
-    width: 25%;
+    width: 100%;
     padding: 20px;
-    margin-right: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-family: sans-serif;

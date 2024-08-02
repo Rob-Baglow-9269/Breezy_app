@@ -1,14 +1,32 @@
+/* components/Weather/WeatherDisplay.css */
 .weather-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: flex-start;
   margin-top: 20px;
+  padding: 20px;
 }
 
 .favourites-wrapper {
+  flex: 1;
+  max-width: 300px; /* Adjust the width as needed */
   margin-right: 20px;
 }
 
 .weather-display {
+  flex: 2;
   text-align: center;
+}
+
+.weather-form {
+  margin-bottom: 20px; /* Space between form and weather info */
+}
+
+.weather-info {
+  margin-top: 20px; /* Space between form and weather info */
+}
+
+.weather-info button {
+  display: block;
+  margin: 10px auto; /* Center the Save button */
 }
