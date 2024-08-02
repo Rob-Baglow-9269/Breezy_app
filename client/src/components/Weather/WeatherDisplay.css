@@ -21,20 +21,3 @@
 .right-section {
   flex-shrink: 0;
 }
-
-.favourites-container {
-  margin-left: 20px;
-  border: 1px solid #ccc;
-  padding: 10px;
-  width: 200px;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.favourite-item {
-  margin-bottom: 10px;
-}
-
-.favourite-item h4 {
-  margin: 0;
-}
