@@ -1,21 +1,39 @@
+/* Assuming you have a navbar with a class of .navbar */
+.navbar {
+  background-color: #3b3b3b; /* Example color, adjust as needed */
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar .title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Weather Display Container */
 .weather-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  align-items: flex-start; /* Align items at the top to reduce padding */
+  height: calc(100vh - 60px); /* Adjust height to consider navbar height */
   background: linear-gradient(135deg, #6e8efb, #a777e3);
   color: white;
   font-family: 'Arial', sans-serif;
 }
 
+/* Form Section Styling */
 .form-section {
-  background: rgba(0, 0, 0, 0.5);
+  background: #3b3b3b; /* Match the navbar background color */
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
+/* Form Styling */
 .form-section form {
   display: flex;
   flex-direction: column;
@@ -44,6 +62,7 @@
   background-color: #6e8efb;
 }
 
+/* Weather Info Styling */
 .weather-info {
   margin-top: 2rem;
   background: rgba(255, 255, 255, 0.2);
@@ -59,4 +78,13 @@
 .weather-info p {
   margin: 0.5rem 0;
   font-size: 1.2rem;
+}
+
+/* Title Banner Styling */
+.title-banner {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffcc00; /* Example highlight color */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1rem;
 }

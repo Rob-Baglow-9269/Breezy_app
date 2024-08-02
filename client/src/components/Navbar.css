@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px;
-  background-color: #d0e0d5; 
+  background-color: #d0e0d5; /* Existing background color */
 }
 
 .navbar-content {
@@ -13,7 +13,7 @@
 }
 
 .navbar-logo img {
-  height: 100px; 
+  height: 100px;
 }
 
 .navbar-title {
@@ -22,10 +22,11 @@
 }
 
 .navbar-title h1 {
-  font-size: 2.5em; 
+  font-size: 2.5em;
   margin: 0;
+  color: #3b3b3b; /* Make the title banner pop */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
-
 .navbar-tray {
   margin-left: auto;
 }
