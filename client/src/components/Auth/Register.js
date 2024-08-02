@@ -11,9 +11,9 @@ const Register = ({ setIsLoggedIn }) => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/users/register', { username, email, password }); 
+      await axios.post('https://breezy-app.onrender.com/api/users/register', { username, email, password }); 
       // After successful registration, log in the user
-      const res = await axios.post('http://localhost:5000/api/users/login', { username, password });
+      const res = await axios.post('https://breezy-app.onrender.com/api/users/login', { username, password });
       localStorage.setItem('token', res.data.token);
       setIsLoggedIn(true);
       navigate('/'); // Redirect to home page

@@ -10,7 +10,7 @@ const WeatherDisplay = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`http://localhost:5000/api/weather?city=${city}`, {
+      const res = await axios.get(`https://breezy-app.onrender.com/api/weather?city=${city}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

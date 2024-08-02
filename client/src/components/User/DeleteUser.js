@@ -5,7 +5,7 @@ const DeleteUser = () => {
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete('/api/users/delete', {
+      await axios.delete('https://breezy-app.onrender.com/api/users/delete', {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert('Account deleted successfully!');

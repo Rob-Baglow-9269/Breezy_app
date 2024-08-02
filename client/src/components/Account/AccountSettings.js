@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './AccountSettings.css'; // Ensure you have the CSS file
+import './AccountSettings.css';
 
 const AccountSettings = ({ setIsLoggedIn }) => {
   const [isLoggedIn, setIsLoggedInState] = useState(false);
@@ -20,7 +20,7 @@ const AccountSettings = ({ setIsLoggedIn }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/users/login', { username, password });
+      const res = await axios.post('https://breezy-app.onrender.com/api/users/login', { username, password });
       localStorage.setItem('token', res.data.token);
       setIsLoggedInState(true);
       setIsLoggedIn(true);

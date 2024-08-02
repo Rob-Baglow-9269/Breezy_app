@@ -10,7 +10,7 @@ const UpdateUser = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.put('/api/users/update', { username, email, password }, {
+      await axios.put('https://breezy-app.onrender.com/api/users/update', { username, email, password }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert('Update successful!');
