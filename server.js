@@ -21,7 +21,6 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api', apiRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/weather', weatherRoutes);
-app.use('/api/favorites', favoriteRoutes);
 
 app.get('/', (req, res) => {
   res.send('Weather App API');
