@@ -1,4 +1,5 @@
 const Favourite = require('../models/Favourites');
+const jwt = require('jsonwebtoken');
 
 // Create a new favourite entry
 exports.createFavourite = async (req, res) => {
@@ -11,11 +12,18 @@ exports.createFavourite = async (req, res) => {
     }
 };
 
-// Get all favourites
 exports.getFavourites = async (req, res) => {
     try {
-        const favourites = await Favourite.find();
-        res.send(favourites);
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+
+        if (token == null) return res.sendStatus(401);
+
+        jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
+            if (err) return res.sendStatus(403);
+            const favourites = await Favourite.find({ username: user.username });
+            res.send(favourites);
+        });
     } catch (error) {
         res.status(500).send(error);
     }
