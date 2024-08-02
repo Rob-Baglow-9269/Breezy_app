@@ -34,7 +34,18 @@ const WeatherDisplay = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      setFavourites(res.data);
+      const favouritesWithWeather = await Promise.all(res.data.map(async (fav) => {
+        const weatherRes = await axios.get(`https://breezy-app.onrender.com/api/weather?city=${fav.cityName}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        return {
+          cityName: fav.cityName,
+          weather: weatherRes.data
+        };
+      }));
+      setFavourites(favouritesWithWeather);
     } catch (error) {
       alert('Failed to fetch favourites');
     }
@@ -47,7 +58,7 @@ const WeatherDisplay = () => {
   const saveFavourite = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('https://breezy-app.onrender.com/api/favourites', { username: 'your_username', savedCities: [{ cityName: city }] }, {
+      await axios.post('https://breezy-app.onrender.com/api/favourites', { savedCities: [{ cityName: city }] }, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -64,6 +75,7 @@ const WeatherDisplay = () => {
         <form onSubmit={fetchWeather}>
           <input type="text" placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
           <button type="submit">Get Weather</button>
+          <button type="button" onClick={saveFavourite}>Save</button>
         </form>
         {weather && (
           <div className="weather-info">
@@ -72,13 +84,18 @@ const WeatherDisplay = () => {
             <p>Condition: {weather.condition}</p>
           </div>
         )}
-        <button onClick={saveFavourite}>Save</button>
       </div>
       <div className="favourites-container">
         <h2>Favourites</h2>
         {favourites.map((fav, index) => (
           <div key={index} className="favourite-item">
             <h4>{fav.cityName}</h4>
+            {fav.weather && (
+              <div className="weather-info">
+                <p>Temperature: {fav.weather.temperature}°C</p>
+                <p>Condition: {fav.weather.condition}</p>
+              </div>
+            )}
           </div>
         ))}
       </div>

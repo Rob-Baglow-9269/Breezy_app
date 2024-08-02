@@ -4,7 +4,10 @@ const jwt = require('jsonwebtoken');
 // Create a new favourite entry
 exports.createFavourite = async (req, res) => {
     try {
-        const favourite = new Favourite(req.body);
+        const favourite = new Favourite({
+            username: req.user.username, // Ensure this is dynamically set
+            savedCities: req.body.savedCities.map(cityName => ({ cityName })) // Map city names to objects
+        });
         await favourite.save();
         res.status(201).send(favourite);
     } catch (error) {
@@ -12,6 +15,7 @@ exports.createFavourite = async (req, res) => {
     }
 };
 
+// Get all favourites for the authenticated user
 exports.getFavourites = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
